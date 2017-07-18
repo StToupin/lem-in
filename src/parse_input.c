@@ -47,26 +47,36 @@ static int	read_number(char *line, int *i, int *result)
 static int	add_room(t_lem_in *lem_in, int x, int y, char *line)
 {
 	int			len;
-	t_room_elem	*room_elem;
+	t_room		*room;
 
 	len = 0;
 	while (line[len]!= '\0')
 		len++;
-	room_elem = room_elem_create(x, y, line, len);
-	if (room_elem == NULL)
-		return (0);
-	room_stack_push(&(lem_in->rooms), room_elem);
-	return (1);
+	room = room_create(x, y, line, len);
+	if (room == NULL)
+		return (1);
+	return (room_stack_push(&(lem_in->rooms), room));
 }
 
-static int	add_link(t_lem_in *lem_in, char *room1, char *room2)
+static int	add_link(t_lem_in *lem_in, char *name_room1, char *name_room2)
 {
-	(void)lem_in;
-	(void)room1;
-	(void)room2;
+	t_room	*room1;
+	t_room	*room2;
+
+	room1 = find_room(&(lem_in->rooms), name_room1);
+	if (room1 == NULL)
+		return (1);
+	room2 = find_room(&(lem_in->rooms), name_room2);
+	if (room2 == NULL)
+		return (1);
+	if (room_stack_push(&(room1->connected), room2))
+		return (1);
+	if (room_stack_push(&(room2->connected), room1))
+		return (1);
 	return (0);
 }
 
+// LES PARAMETRES SONT PAS LUS DANS LE BON ORDRE !!!! A CORRIGER D'URGENCE
 static int parse_line_room(t_lem_in *lem_in, char *line, int *state)
 {
 	int i;
@@ -86,7 +96,9 @@ static int parse_line_room(t_lem_in *lem_in, char *line, int *state)
 		return (1);
 	if (!read_number(line, &i, &y))
 		return (1);
-	if (!add_room(lem_in, x, y, &(line[i])))
+	if (line[i++] != ' ')
+		return (1);
+	if (add_room(lem_in, x, y, &(line[i])))
 		return (1);
 	if (*state == 1)
 		lem_in->start = lem_in->rooms.top->room;
@@ -107,7 +119,8 @@ static int parse_line_link(t_lem_in *lem_in, char *line, int *state)
 	while (line[i] != '-')
 		i++;
 	dash = i;
-	if (!add_link(lem_in, line, line + dash + 1))
+	line[dash] = '\0';
+	if (add_link(lem_in, line, line + dash + 1))
 		return (1);
 	*state = 3;
 	return (0);
@@ -138,13 +151,13 @@ static int parse_line(t_lem_in *lem_in, char *line, int *state)
 		return (parse_line_room(lem_in, line, state));
 	else if (n_dashes == 1)
 		return (parse_line_link(lem_in, line, state));
+	return (1);
 }
 
 static void init(t_lem_in *lem_in)
 {
-	lem_in->n_rooms = 0;
 	room_stack_init(&(lem_in->rooms));
-	lem_in ->start = NULL;
+	lem_in->start = NULL;
 	lem_in->end = NULL;
 	room_stack_init(&(lem_in->ants));
 }

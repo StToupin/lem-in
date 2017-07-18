@@ -31,7 +31,7 @@ t_room		*room_create(int x, int y, char *name, int len)
 		ft_strncpy(room->name, name, len);
 		room->x = x;
 		room->y = y;
-		room->connected = NULL;
+		room_stack_init(&(room->connected));
 	}
 	else
 	{
@@ -41,37 +41,21 @@ t_room		*room_create(int x, int y, char *name, int len)
 	return (room);
 }
 
-t_room_elem	*room_elem_create(int x, int y, char *name, int len)
+int			room_stack_push(t_room_stack *room_stack, t_room *room)
 {
-	t_room		*room;
-	t_room_elem *room_elem;
-	int			err;
+	t_room_elem *elem;
 
-	err = 0;
-	room_elem = (t_room_elem*)malloc(sizeof(t_room_elem));
-	if (room_elem)
-	{
-		room = room_create(x, y, name, len);
-		if (room)
-		{
-			room_elem->room = room;
-			room_elem->next = NULL;
-		}
-		else
-		{
-			free(room_elem);
-			room_elem = NULL;
-		}
-	}
-	return (room_elem);
-}
-
-int			room_stack_push(t_room_stack *room_stack, t_room_elem *elem)
-{
-	if (room_stack == NULL || elem == NULL)
+	if (room_stack == NULL || room == NULL)
 		return (1);
+	elem = (t_room_elem*)malloc(sizeof(t_room_elem));
+	if (elem == NULL)
+		return (1);
+	elem->room = room;
 	if (room_stack->n == 0)
+	{
+		elem->next = NULL;
 		room_stack->top = elem;
+	}
 	else
 	{
 		elem->next = room_stack->top;
@@ -81,9 +65,31 @@ int			room_stack_push(t_room_stack *room_stack, t_room_elem *elem)
 	return (0);
 }
 
+t_room		*find_room(t_room_stack *room_stack, char *name)
+{
+	t_room_elem	*elem;
+
+	elem = room_stack->top;
+	while (elem != NULL)
+	{
+		if (ft_strcmp(elem->room->name, name) == 0)
+			return (elem->room);
+		elem = elem->next;
+	}
+	return (NULL);
+}
+
 void	print_room(t_room *room)
 {
+	t_room_elem	*elem;
+
 	printf("x: %d, y: %d, name: %s\n", room->x, room->y, room->name);
+	elem = room->connected.top;
+	while (elem != NULL)
+	{
+		printf("  -> %s\n", elem->room->name);
+		elem = elem->next;
+	}
 }
 
 void	print_room_stack(t_room_stack *room_stack)

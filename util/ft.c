@@ -61,4 +61,5 @@ void	ft_strncpy(char *dest, char *src, int len)
 		dest[i] = src[i];
 		i++;
 	}
+	dest[i] = '\0';
 }

@@ -27,12 +27,11 @@ typedef struct	s_room
 	char			*name;
 	int				x;
 	int				y;
-	t_room_stack	*connected;
+	t_room_stack	connected;
 }				t_room;
 
 typedef struct	s_lem_in
 {
-	int				n_rooms;
 	t_room_stack	rooms;
 	t_room			*start;
 	t_room			*end;
@@ -45,10 +44,10 @@ typedef struct	s_lem_in
 
 void		room_stack_init(t_room_stack *room_stack);
 t_room		*room_create(int x, int y, char *name, int len);
-t_room_elem	*room_elem_create(int x, int y, char *name, int len);
-int			room_stack_push(t_room_stack *room_stack, t_room_elem *elem);
-void	print_room(t_room *room);
-void	print_room_stack(t_room_stack *room_stack);
+int			room_stack_push(t_room_stack *room_stack, t_room *room);
+t_room		*find_room(t_room_stack *room_stack, char *name);
+void		print_room(t_room *room);
+void		print_room_stack(t_room_stack *room_stack);
 
 /*
 ** From parse_input.c
