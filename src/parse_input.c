@@ -50,7 +50,7 @@ static int	add_room(t_lem_in *lem_in, int x, int y, char *line)
 	t_room		*room;
 
 	len = 0;
-	while (line[len]!= '\0')
+	while (line[len]!= ' ')
 		len++;
 	room = room_create(x, y, line, len);
 	if (room == NULL)
@@ -76,7 +76,6 @@ static int	add_link(t_lem_in *lem_in, char *name_room1, char *name_room2)
 	return (0);
 }
 
-// LES PARAMETRES SONT PAS LUS DANS LE BON ORDRE !!!! A CORRIGER D'URGENCE
 static int parse_line_room(t_lem_in *lem_in, char *line, int *state)
 {
 	int i;
@@ -90,15 +89,14 @@ static int parse_line_room(t_lem_in *lem_in, char *line, int *state)
 	if (*state == 2 && lem_in->end != NULL)
 		return (1);
 	i = 0;
+	while (line[i++] != ' ');
 	if (!read_number(line, &i, &x))
 		return (1);
 	if (line[i++] != ' ')
 		return (1);
 	if (!read_number(line, &i, &y))
 		return (1);
-	if (line[i++] != ' ')
-		return (1);
-	if (add_room(lem_in, x, y, &(line[i])))
+	if (add_room(lem_in, x, y, line))
 		return (1);
 	if (*state == 1)
 		lem_in->start = lem_in->rooms.top->room;
