@@ -13,7 +13,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <limits.h>
-#include "lem-in.h"
+#include "lem_in.h"
 #include "get_next.h"
 #include "ft.h"
 
@@ -36,7 +36,7 @@ static int	read_number(char *line, int *i, int *result)
 		c = line[*i];
 		if ((sign == 1 && *result > (INT_MAX - c + '0') / 10)
 			|| (sign == -1 && *result < (INT_MIN + c - '0') / 10))
-				return (0);
+			return (0);
 		*result = (*result * 10) + (c - '0') * sign;
 		ok = 1;
 		(*i)++;
@@ -50,7 +50,7 @@ static int	add_room(t_lem_in *lem_in, int x, int y, char *line)
 	t_room		*room;
 
 	len = 0;
-	while (line[len]!= ' ')
+	while (line[len] != ' ')
 		len++;
 	room = room_create(x, y, line, len);
 	if (room == NULL)
@@ -76,7 +76,7 @@ static int	add_link(t_lem_in *lem_in, char *name_room1, char *name_room2)
 	return (0);
 }
 
-static int parse_line_room(t_lem_in *lem_in, char *line, int *state)
+static int	parse_line_room(t_lem_in *lem_in, char *line, int *state)
 {
 	int i;
 	int x;
@@ -84,15 +84,14 @@ static int parse_line_room(t_lem_in *lem_in, char *line, int *state)
 
 	if (*state != 0 && *state != 1 && *state != 2)
 		return (1);
-	if (*state == 1 && lem_in->start != NULL)
-		return (1);
-	if (*state == 2 && lem_in->end != NULL)
+	if ((*state == 1 && lem_in->start != NULL)
+		|| (*state == 2 && lem_in->end != NULL))
 		return (1);
 	i = 0;
-	while (line[i++] != ' ');
-	if (!read_number(line, &i, &x))
-		return (1);
-	if (line[i++] != ' ')
+	while (line[i] != ' ')
+		i++;
+	i++;
+	if (!read_number(line, &i, &x) || line[i++] != ' ')
 		return (1);
 	if (!read_number(line, &i, &y))
 		return (1);
@@ -106,7 +105,7 @@ static int parse_line_room(t_lem_in *lem_in, char *line, int *state)
 	return (0);
 }
 
-static int parse_line_link(t_lem_in *lem_in, char *line, int *state)
+static int	parse_line_link(t_lem_in *lem_in, char *line, int *state)
 {
 	int i;
 	int dash;
@@ -124,7 +123,7 @@ static int parse_line_link(t_lem_in *lem_in, char *line, int *state)
 	return (0);
 }
 
-static int parse_line(t_lem_in *lem_in, char *line, int *state)
+static int	parse_line(t_lem_in *lem_in, char *line, int *state)
 {
 	int i;
 	int n_spaces;
@@ -152,7 +151,7 @@ static int parse_line(t_lem_in *lem_in, char *line, int *state)
 	return (1);
 }
 
-static void init(t_lem_in *lem_in)
+void		init(t_lem_in *lem_in)
 {
 	room_stack_init(&(lem_in->rooms));
 	lem_in->start = NULL;
@@ -160,20 +159,18 @@ static void init(t_lem_in *lem_in)
 	room_stack_init(&(lem_in->ants));
 }
 
-int	parse_input(t_lem_in *lem_in)
+int			parse_input(t_lem_in *lem_in)
 {
 	t_openfile	of;
 	char		*line;
 	int			state;
 	int			error;
 
-	init(lem_in);
 	error = 0;
 	state = 0;
 	get_next_init(&of, STDIN_FILENO);
 	while (get_next_line(&of, &line) == 1 && error == 0)
 	{
-		printf("%s\n", line);
 		if (ft_strcmp(line, "##start") == 0)
 			if (state == 0)
 				state = 1;

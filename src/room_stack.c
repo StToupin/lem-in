@@ -12,7 +12,7 @@
 
 #include <stdlib.h>
 #include "ft.h"
-#include "lem-in.h"
+#include "lem_in.h"
 
 void		room_stack_init(t_room_stack *room_stack)
 {
@@ -79,7 +79,7 @@ t_room		*find_room(t_room_stack *room_stack, char *name)
 	return (NULL);
 }
 
-void	print_room(t_room *room)
+void		print_room(t_room *room)
 {
 	t_room_elem	*elem;
 
@@ -92,7 +92,7 @@ void	print_room(t_room *room)
 	}
 }
 
-void	print_room_stack(t_room_stack *room_stack)
+void		print_room_stack(t_room_stack *room_stack)
 {
 	t_room_elem	*elem;
 
