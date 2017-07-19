@@ -128,17 +128,18 @@ class Map:
 		import networkx as nx
 		import matplotlib.pyplot as plt
 		G = nx.Graph()
+		pos = {}
 		for room in self.rooms.values():
-			G.add_node(room.name, pos = (room.x, room.y))
+			pos[room.name] = (room.x, -room.y)
+			G.add_node(room.name)
 			for linked_room, connection in room.connections.items():
 				if connection.flux >= 0:
 					G.add_edge(room.name, linked_room.name, weight = connection.flux)
-		pos = nx.spring_layout(G)
 		edge_labels = dict([((u, v, ), d['weight']) for u, v, d in G.edges(data = True)])
 		red_nodes = [self.start.name, self.end.name]
-		node_colors = ['black' if not node in red_nodes else 'red' for node in G.nodes()]
+		node_colors = ['blue' if not node in red_nodes else 'red' for node in G.nodes()]
 		nx.draw_networkx_edge_labels(G, pos, edge_labels = edge_labels)
-		nx.draw(G, pos, node_color = node_colors)
+		nx.draw(G, pos, node_color = node_colors, node_size = 1500, with_labels = True)
 		plt.show()
 
 try:
@@ -182,6 +183,6 @@ while True:
 		room.connections[parent_room].flux -= m.end.capacity
 		room = parent_room
 
-print m
-print flux
+#print m
+#print flux
 m.draw()
