@@ -78,28 +78,3 @@ t_room		*find_room(t_room_stack *room_stack, char *name)
 	}
 	return (NULL);
 }
-
-void		print_room(t_room *room)
-{
-	t_room_elem	*elem;
-
-	printf("x: %d, y: %d, name: %s\n", room->x, room->y, room->name);
-	elem = room->connected.top;
-	while (elem != NULL)
-	{
-		printf("  -> %s\n", elem->room->name);
-		elem = elem->next;
-	}
-}
-
-void		print_room_stack(t_room_stack *room_stack)
-{
-	t_room_elem	*elem;
-
-	elem = room_stack->top;
-	while (elem != NULL)
-	{
-		print_room(elem->room);
-		elem = elem->next;
-	}
-}

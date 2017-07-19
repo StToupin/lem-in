@@ -42,6 +42,14 @@ typedef struct	s_lem_in
 }				t_lem_in;
 
 /*
+** From debug.c
+*/
+
+void			ft_putstr(char *str);
+void			print_room(t_room *room);
+void			print_room_stack(t_room_stack *room_stack);
+
+/*
 ** From room_stack.c
 */
 
@@ -53,10 +61,17 @@ void			print_room(t_room *room);
 void			print_room_stack(t_room_stack *room_stack);
 
 /*
-** From parse_input.c
+** From build_map.c
 */
 
 void			init(t_lem_in *lem_in);
+int				add_room(t_lem_in *lem_in, int x, int y, char *line);
+int				add_link(t_lem_in *lem_in, char *name_room1, char *name_room2);
+
+/*
+** From parse_input.c
+*/
+
 int				parse_input(t_lem_in *lem_in);
 
 #endif

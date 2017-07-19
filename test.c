@@ -7,8 +7,8 @@ int main(void)
 	init(&lem_in);
 	parse_input(&lem_in);
 	print_room_stack(&(lem_in.rooms));
-	printf("Start: ");
+	ft_putstr("Start: ");
 	print_room(lem_in.start);
-	printf("End: ");
+	ft_putstr("End: ");
 	print_room(lem_in.start);
 }
