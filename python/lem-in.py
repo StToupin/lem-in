@@ -2,10 +2,13 @@ from sys import argv, exit
 from decimal import Decimal
 
 class ParseError(Exception): pass
+class WrongNumberOfAnts: pass
+class WrongRoomName: pass
 class DoubleRoomDefinition(Exception): pass
 class MissingStartRoom(Exception): pass
 class MissingEndRoom(Exception): pass
 class MissingRoomInLink(Exception): pass
+class UnexpectedLine(Exception): pass
 
 class Connection:
 	def __init__(self, capacity, flux):
@@ -28,6 +31,17 @@ class Room:
 			self.connections[room] = Connection(1, 0)
 
 class Map:
+	def parse_ant_line(self, line):
+		from re import match
+		m = match(r'^([\+-]?\d+)$', line)
+		if m:
+			n_ants = int(m.group(1))
+			if (n_ants < 0):
+				raise WrongNumberOfAnts
+			return n_ants
+		else:
+			raise ParseError
+
 	def parse_room_line(self, line):
 		from re import match
 		m = match(r'^([^ ^\-]+) ([\+-]?\d+) ([\+-]?\d+)$', line)
@@ -37,6 +51,8 @@ class Map:
 			y = int(m.group(3))
 			if name in self.rooms.keys():
 				raise DoubleRoomDefinition
+			elif name[0] == 'L' or name[0] == '#':
+				raise WrongRoomName
 			else:
 				new_room = Room(x, y, name)
 				self.rooms[name] = new_room
@@ -65,21 +81,29 @@ class Map:
 		self.links = []
 		self.start = None
 		self.end = None
+		self.n_ants = 0
 		with open(file_name, 'r') as f:
-			state = 0
+			state = -1
 			for line in f:
 				line = line[:-1]
 				print line
-				if line == "##start":
+				if state == -1:
+					self.n_ants = self.parse_ant_line(line)
+					state = 0
+				elif line == "##start":
 					if state == 0:
 						state = 1
+					elif state == 2:
+						state = 3
 					else:
-						raise ParseError
+						raise UnexpectedLine
 				elif line == "##end":
 					if state == 0:
 						state = 2
+					elif state == 1:
+						state = 3
 					else:
-						raise ParseError
+						raise UnexpectedLine
 				elif line.startswith('#'):
 					continue
 				else:
@@ -92,21 +116,20 @@ class Map:
 							n_dashes += 1
 					if n_dashes == 1 and n_spaces == 0:
 						if state == 0:
-							state = 3
-						elif state != 3:
-							raise ParseError
+							state = 4
+						elif state != 4:
+							raise UnexpectedLine
 						self.parse_link_line(line)
 					elif n_spaces == 2:
-						if (state == 0 or state == 1 or state == 2):
+						if (state == 0 or state == 1 or state == 2 or state == 3):
 							last_room = self.parse_room_line(line)
-							if state == 1:
+							if state == 1 or state == 3:
 								self.start = last_room
-								state = 0
-							if state == 2:
+							if state == 2 or state == 3:
 								self.end = last_room
-								state = 0
+							state = 0
 						else:
-							raise ParseError
+							raise UnexpectedLine
 					else:
 						raise ParseError
 			if self.start == None:
@@ -149,6 +172,7 @@ except IndexError:
 	exit(0)
 
 m = Map(file_name)
+exit(0)
 
 # Edmonds-Karp
 

@@ -38,8 +38,19 @@ typedef struct	s_lem_in
 	t_room_stack	rooms;
 	t_room			*start;
 	t_room			*end;
+	int				n_ants;
 	t_room_stack	ants;
 }				t_lem_in;
+
+typedef enum	e_state
+{
+	S_N_ANTS,
+	S_ROOM,
+	S_START,
+	S_END,
+	S_STARTEND,
+	S_LINK
+}				t_state;
 
 /*
 ** From debug.c

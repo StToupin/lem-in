@@ -51,6 +51,11 @@ void		print_room(t_room *room)
 {
 	t_room_elem	*elem;
 
+	if (room == NULL)
+	{
+		ft_putstr("(null)\n");
+		return ;
+	}
 	ft_putstr("x: ");
 	ft_putnbr(room->x);
 	ft_putstr(", y: ");
