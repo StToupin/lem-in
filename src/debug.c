@@ -63,7 +63,7 @@ void		print_room(t_room *room)
 	ft_putstr(", name: ");
 	ft_putstr(room->name);
 	ft_putstr("\n");
-	elem = room->connected.top;
+	elem = room->connected.first;
 	while (elem != NULL)
 	{
 		ft_putstr("  -> ");
@@ -73,11 +73,11 @@ void		print_room(t_room *room)
 	}
 }
 
-void		print_room_stack(t_room_stack *room_stack)
+void		print_room_list(t_room_list *room_list)
 {
 	t_room_elem	*elem;
 
-	elem = room_stack->top;
+	elem = room_list->first;
 	while (elem != NULL)
 	{
 		print_room(elem->room);

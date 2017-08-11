@@ -9,7 +9,7 @@ int	main(void)
 	err = parse_input(&lem_in);
 	if (err == 1)
 		ft_putstr("Error\n");
-	print_room_stack(&(lem_in.rooms));
+	print_room_list(&(lem_in.rooms));
 	ft_putstr("Start: ");
 	print_room(lem_in.start);
 	ft_putstr("End: ");

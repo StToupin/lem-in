@@ -9,7 +9,7 @@ endif
 NAME = lem-in
 
 SRC_UTIL = ft.c get_next_byte.c slist.c get_next_line.c
-SRC = $(SRC_UTIL) debug.c room_stack.c build_map.c parse_input.c test.c
+SRC = $(SRC_UTIL) debug.c room_list.c build_map.c parse_input.c test.c
 OBJ = $(addprefix $(OBJDIR)/, $(SRC:.c=.o))
 OBJDIR = obj
 

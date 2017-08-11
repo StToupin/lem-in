@@ -67,9 +67,9 @@ static int	parse_line_room(t_lem_in *lem_in, char *line, t_state *state)
 
 	if (*state < S_ROOM || *state > S_STARTEND)
 		return (1);
-	if (((*state == S_START || *state == S_END || *state == S_STARTEND)
+	if (((*state == S_START || *state == S_STARTEND)
 			&& lem_in->start != NULL)
-		|| ((*state == S_END || *state == S_END || *state == S_STARTEND)
+		|| ((*state == S_END || *state == S_STARTEND)
 			&& lem_in->end != NULL))
 		return (1);
 	i = 0;
@@ -81,11 +81,11 @@ static int	parse_line_room(t_lem_in *lem_in, char *line, t_state *state)
 		|| !read_number(line, &i, &y) || add_room(lem_in, x, y, line))
 		return (1);
 	if (*state == S_START || *state == S_STARTEND)
-		lem_in->start = lem_in->rooms.top->room;
+		lem_in->start = lem_in->rooms.first->room;
 	if (*state == S_END || *state == S_STARTEND)
-		lem_in->end = lem_in->rooms.top->room;
+		lem_in->end = lem_in->rooms.first->room;
 	*state = S_ROOM;
-	return (lem_in->rooms.top->room->name[0] == 'L');
+	return (lem_in->rooms.first->room->name[0] == 'L');
 }
 
 static int	parse_line_link(t_lem_in *lem_in, char *line, t_state *state)
@@ -141,7 +141,7 @@ static int	finalize_parsing(t_lem_in *lem_in)
 	i = 0;
 	while (i < lem_in->n_ants)
 	{
-		if (room_stack_push(&(lem_in->ants), lem_in->start))
+		if (room_list_push(&(lem_in->ants), lem_in->start))
 			return (1);
 		i++;
 	}

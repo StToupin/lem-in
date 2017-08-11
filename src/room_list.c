@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   room_stack.c                                       :+:      :+:    :+:   */
+/*   room_list.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: stoupin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -14,10 +14,11 @@
 #include "ft.h"
 #include "lem_in.h"
 
-void		room_stack_init(t_room_stack *room_stack)
+void		room_list_init(t_room_list *room_list)
 {
-	room_stack->n = 0;
-	room_stack->top = NULL;
+	room_list->n = 0;
+	room_list->first = NULL;
+	room_list->last = NULL;
 }
 
 t_room		*room_create(int x, int y, char *name, int len)
@@ -31,7 +32,7 @@ t_room		*room_create(int x, int y, char *name, int len)
 		ft_strncpy(room->name, name, len);
 		room->x = x;
 		room->y = y;
-		room_stack_init(&(room->connected));
+		room_list_init(&(room->connected));
 	}
 	else
 	{
@@ -41,35 +42,53 @@ t_room		*room_create(int x, int y, char *name, int len)
 	return (room);
 }
 
-int			room_stack_push(t_room_stack *room_stack, t_room *room)
+int			room_list_push(t_room_list *room_list, t_room *room)
 {
 	t_room_elem *elem;
 
-	if (room_stack == NULL || room == NULL)
+	if (room_list == NULL || room == NULL)
 		return (1);
 	elem = (t_room_elem*)malloc(sizeof(t_room_elem));
 	if (elem == NULL)
 		return (1);
 	elem->room = room;
-	if (room_stack->n == 0)
+	if (room_list->n == 0)
 	{
+		elem->prev = NULL;
 		elem->next = NULL;
-		room_stack->top = elem;
+		room_list->first = elem;
+		room_list->last = elem;
 	}
 	else
 	{
-		elem->next = room_stack->top;
-		room_stack->top = elem;
+		elem->prev = room_list->last;
+		elem->next = NULL;
+		room_list->last->next = elem;
+		room_list->last = elem;
 	}
-	room_stack->n++;
+	room_list->n++;
 	return (0);
 }
 
-t_room		*find_room(t_room_stack *room_stack, char *name)
+t_room		*room_list_popfront(t_room_list *room_list)
+{
+	t_room_elem *elem;
+	t_room		*room;
+
+	if (room_list->n <= 0)
+		return (NULL);
+	elem = room_list->first;
+	room = elem->room;
+	room_list->first = elem->next;
+	free(elem);
+	return (room);
+}
+
+t_room		*find_room(t_room_list *room_list, char *name)
 {
 	t_room_elem	*elem;
 
-	elem = room_stack->top;
+	elem = room_list->first;
 	while (elem != NULL)
 	{
 		if (ft_strcmp(elem->room->name, name) == 0)

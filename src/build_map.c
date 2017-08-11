@@ -15,10 +15,10 @@
 
 void	init(t_lem_in *lem_in)
 {
-	room_stack_init(&(lem_in->rooms));
+	room_list_init(&(lem_in->rooms));
 	lem_in->start = NULL;
 	lem_in->end = NULL;
-	room_stack_init(&(lem_in->ants));
+	room_list_init(&(lem_in->ants));
 }
 
 int		add_room(t_lem_in *lem_in, int x, int y, char *line)
@@ -32,7 +32,7 @@ int		add_room(t_lem_in *lem_in, int x, int y, char *line)
 	room = room_create(x, y, line, len);
 	if (room == NULL)
 		return (1);
-	return (room_stack_push(&(lem_in->rooms), room));
+	return (room_list_push(&(lem_in->rooms), room));
 }
 
 int		add_link(t_lem_in *lem_in, char *name_room1, char *name_room2)
@@ -46,9 +46,9 @@ int		add_link(t_lem_in *lem_in, char *name_room1, char *name_room2)
 	room2 = find_room(&(lem_in->rooms), name_room2);
 	if (room2 == NULL)
 		return (1);
-	if (room_stack_push(&(room1->connected), room2))
+	if (room_list_push(&(room1->connected), room2))
 		return (1);
-	if (room_stack_push(&(room2->connected), room1))
+	if (room_list_push(&(room2->connected), room1))
 		return (1);
 	return (0);
 }
