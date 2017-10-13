@@ -33,6 +33,7 @@ typedef struct	s_room
 	int				x;
 	int				y;
 	t_room_list		connected;
+	struct s_room	*parent;
 }				t_room;
 
 typedef struct	s_lem_in
@@ -85,5 +86,11 @@ int				add_link(t_lem_in *lem_in, char *name_room1, char *name_room2);
 */
 
 int				parse_input(t_lem_in *lem_in);
+
+/*
+** From solver.c
+*/
+
+int				solve_BFS(t_lem_in *lem_in);
 
 #endif

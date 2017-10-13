@@ -71,6 +71,12 @@ void		print_room(t_room *room)
 		ft_putstr("\n");
 		elem = elem->next;
 	}
+	if (room->parent != NULL)
+	{
+		ft_putstr("  Parent: ");
+		ft_putstr(room->parent->name);
+		ft_putstr("\n");
+	}
 }
 
 void		print_room_list(t_room_list *room_list)

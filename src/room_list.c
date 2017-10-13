@@ -33,6 +33,7 @@ t_room		*room_create(int x, int y, char *name, int len)
 		room->x = x;
 		room->y = y;
 		room_list_init(&(room->connected));
+		room->parent = NULL;
 	}
 	else
 	{
@@ -80,6 +81,7 @@ t_room		*room_list_popfront(t_room_list *room_list)
 	elem = room_list->first;
 	room = elem->room;
 	room_list->first = elem->next;
+	room_list->n--;
 	free(elem);
 	return (room);
 }
