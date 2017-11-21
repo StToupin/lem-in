@@ -11,6 +11,8 @@
 /* ************************************************************************** */
 
 #include <unistd.h>
+#include <stdio.h> //
+#include <stdlib.h> //
 #include "lem_in.h"
 
 static void	print_digit(int n)
@@ -27,7 +29,7 @@ static void	print_digit(int n)
 	write(1, &digit, 1);
 }
 
-static void	ft_putnbr(int n)
+void		ft_putnbr(int n)
 {
 	if (n < 0)
 		write(1, "-", 1);
@@ -45,6 +47,20 @@ void		ft_putstr(char *str)
 	while (str[len] != '\0')
 		len++;
 	write(1, str, len);
+}
+
+int			ft_puterror(int verbose, char *str)
+{
+	int len;
+
+	if (verbose)
+	{
+		len = 0;
+		while (str[len] != '\0')
+			len++;
+		//write(2, str, len);
+	}
+	return (1);
 }
 
 void		print_room(t_room *room)
@@ -89,4 +105,17 @@ void		print_room_list(t_room_list *room_list)
 		print_room(elem->room);
 		elem = elem->next;
 	}
+}
+
+int			print_path_from_end(t_room *room)
+{
+	int n;
+
+	if (room->parent == room)
+		n = 0;
+	else
+		n = print_path_from_end(room->parent) + 1;
+	ft_putstr(room->name);
+	ft_putstr("\n");
+	return (n);
 }

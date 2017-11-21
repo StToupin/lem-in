@@ -38,6 +38,7 @@ typedef struct	s_room
 
 typedef struct	s_lem_in
 {
+	int				verbose;
 	t_room_list		rooms;
 	t_room			*start;
 	t_room			*end;
@@ -60,17 +61,20 @@ typedef enum	e_state
 */
 
 void			ft_putstr(char *str);
+void			ft_putnbr(int n);
+int				ft_puterror(int verbose, char *str);
 void			print_room(t_room *room);
 void			print_room_list(t_room_list *room_list);
+int				print_path_from_end(t_room *room);
 
 /*
 ** From room_list.c
 */
 
 void			room_list_init(t_room_list *room_list);
-t_room			*room_create(int x, int y, char *name, int len);
-int				room_list_push(t_room_list *room_list, t_room *room);
-t_room			*room_list_popfront(t_room_list *room_list);
+t_room			*room_create(int x, int y, char *name, int len, char *dbg_msg);
+int				room_list_push(t_room_list *room_list, t_room *room, char *dbg_msg);
+t_room			*room_list_popfront(t_room_list *room_list, char *dbg_msg);
 t_room			*find_room(t_room_list *room_list, char *name);
 
 /*

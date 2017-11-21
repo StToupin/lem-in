@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include <stdlib.h>
+#include "ft.h"
 
 int		ft_strcmp(const char *s1, const char *s2)
 {
@@ -37,7 +38,7 @@ char	*ft_strndup(char *str, int n)
 	char	*new_str;
 	int		i;
 
-	new_str = (char*)malloc(sizeof(char) * (n + 1));
+	new_str = (char*)ft_malloc(sizeof(char) * (n + 1), "strndup");
 	if (new_str != NULL)
 	{
 		i = 0;
@@ -62,4 +63,19 @@ void	ft_strncpy(char *dest, char *src, int len)
 		i++;
 	}
 	dest[i] = '\0';
+}
+
+void		*ft_malloc(size_t size, char *dbg_msg)
+{
+	void	*ptr;
+
+	ptr = malloc(size);
+	//printf("malloc %p (%s)\n", ptr, dbg_msg); //
+	return (ptr);
+}
+
+void		ft_free(void *ptr, char *dbg_msg)
+{
+	//printf("free %p (%s)\n", ptr, dbg_msg); //
+	free(ptr);
 }

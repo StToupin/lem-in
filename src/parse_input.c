@@ -50,11 +50,11 @@ static int	parse_line_ants(t_lem_in *lem_in, char *line, t_state *state)
 
 	i = 0;
 	if (!read_number(line, &i, &(lem_in->n_ants)))
-		return (1);
+		return (ft_puterror(lem_in->verbose, "(parse_line_ants) error parsing number\n"));
 	if (line[i] != 0)
-		return (1);
+		return (ft_puterror(lem_in->verbose, "(parse_line_ants) syntax error\n"));
 	if (lem_in->n_ants < 0)
-		return (1);
+		return (ft_puterror(lem_in->verbose, "(parse_line_ants) negative number of ants\n"));
 	*state = S_ROOM;
 	return (0);
 }
@@ -66,12 +66,12 @@ static int	parse_line_room(t_lem_in *lem_in, char *line, t_state *state)
 	int y;
 
 	if (*state < S_ROOM || *state > S_STARTEND)
-		return (1);
+		return (ft_puterror(lem_in->verbose, "(parse_line_room) bad state\n"));
 	if (((*state == S_START || *state == S_STARTEND)
 			&& lem_in->start != NULL)
 		|| ((*state == S_END || *state == S_STARTEND)
 			&& lem_in->end != NULL))
-		return (1);
+		return (ft_puterror(lem_in->verbose, "(parse_line_room) two starts or two ends\n"));
 	i = 0;
 	while (line[i] != ' ')
 		if (line[i++] == '-')
@@ -81,9 +81,9 @@ static int	parse_line_room(t_lem_in *lem_in, char *line, t_state *state)
 		|| !read_number(line, &i, &y) || add_room(lem_in, x, y, line))
 		return (1);
 	if (*state == S_START || *state == S_STARTEND)
-		lem_in->start = lem_in->rooms.first->room;
+		lem_in->start = lem_in->rooms.last->room;
 	if (*state == S_END || *state == S_STARTEND)
-		lem_in->end = lem_in->rooms.first->room;
+		lem_in->end = lem_in->rooms.last->room;
 	*state = S_ROOM;
 	return (lem_in->rooms.first->room->name[0] == 'L');
 }
@@ -94,7 +94,7 @@ static int	parse_line_link(t_lem_in *lem_in, char *line, t_state *state)
 	int dash;
 
 	if (*state != S_ROOM && *state != S_LINK)
-		return (1);
+		return (ft_puterror(lem_in->verbose, "(parse_line_link) bad state\n"));
 	i = 0;
 	while (line[i] != '-')
 		i++;
@@ -129,7 +129,7 @@ static int	parse_line(t_lem_in *lem_in, char *line, t_state *state)
 		return (parse_line_room(lem_in, line, state));
 	else if (n_dashes == 1)
 		return (parse_line_link(lem_in, line, state));
-	return (1);
+	return (ft_puterror(lem_in->verbose, "(parse_line) syntax error\n"));
 }
 
 static int	finalize_parsing(t_lem_in *lem_in)
@@ -137,12 +137,12 @@ static int	finalize_parsing(t_lem_in *lem_in)
 	int	i;
 
 	if (lem_in->start == NULL || lem_in->end == NULL)
-		return (1);
+		return (ft_puterror(lem_in->verbose, "(finalize_parsing) bad input\n"));
 	i = 0;
 	while (i < lem_in->n_ants)
 	{
-		if (room_list_push(&(lem_in->ants), lem_in->start))
-			return (1);
+		if (room_list_push(&(lem_in->ants), lem_in->start, "finalize parsing push ant"))
+			return (ft_puterror(lem_in->verbose, "(finalize_parsing) memory error\n"));
 		i++;
 	}
 	return (0);
@@ -154,11 +154,12 @@ int			parse_input(t_lem_in *lem_in)
 	char		*line;
 	t_state		s;
 	int			error;
+	int			ret;
 
 	error = 0;
 	s = S_N_ANTS;
 	get_next_init(&of, STDIN_FILENO);
-	while (get_next_line(&of, &line) == 1 && error == 0)
+	while ((ret = get_next_line(&of, &line)) == 1 && error == 0 && line[0] != '\0')
 	{
 		ft_putstr(line);
 		ft_putstr("\n");
@@ -170,7 +171,9 @@ int			parse_input(t_lem_in *lem_in)
 			s = (s == S_START || s == S_STARTEND) ? S_STARTEND : S_END;
 		else if (line[0] != '#')
 			error = parse_line(lem_in, line, &s);
-		free(line);
+		ft_free(line, "slist free line");
 	}
+	if (ret == 1)
+		ft_free(line, "slist free line last");
 	return (error || finalize_parsing(lem_in));
 }

@@ -16,5 +16,7 @@
 int		ft_strcmp(const char *s1, const char *s2);
 char	*ft_strndup(char *str, int n);
 void	ft_strncpy(char *dest, char *src, int len);
+void	*ft_malloc(size_t size, char *dbg_msg);
+void	ft_free(void *ptr, char *dbg_msg);
 
 #endif

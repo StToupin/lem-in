@@ -26,8 +26,8 @@ int			slist_push_front(t_slist *slist, char *s, size_t len)
 {
 	t_slist_elem	*element;
 
-	element = (t_slist_elem*)malloc(sizeof(t_slist_elem)
-									+ sizeof(char) * (len + 1));
+	element = (t_slist_elem*)ft_malloc(sizeof(t_slist_elem)
+									+ sizeof(char) * (len + 1), "slist push front");
 	if (element == NULL)
 		return (1);
 	element->s = (void*)element + sizeof(t_slist_elem);
@@ -63,7 +63,7 @@ void		slist_pop_back(t_slist *slist, char *dest, size_t *len)
 	slist->total_len -= element->len;
 	*len = element->len;
 	ft_strncpy(dest, element->s, *len);
-	free(element);
+	ft_free(element, "slist pop back");
 }
 
 char		*slist_join(t_slist *slist)
@@ -72,7 +72,7 @@ char		*slist_join(t_slist *slist)
 	size_t	elem_len;
 	size_t	copied;
 
-	joined = (char*)malloc(sizeof(char) * (slist->total_len + 1));
+	joined = (char*)ft_malloc(sizeof(char) * (slist->total_len + 1), "slist join");
 	if (joined == NULL)
 		return (NULL);
 	copied = 0;

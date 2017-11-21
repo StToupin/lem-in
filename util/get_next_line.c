@@ -29,6 +29,7 @@ static int	slist_delete(t_slist *slist)
 			slist->last->next = NULL;
 		slist->len--;
 		slist->total_len -= element->len;
+		ft_free(element, "slist delete");
 	}
 	return (1);
 }

@@ -21,11 +21,11 @@ void		room_list_init(t_room_list *room_list)
 	room_list->last = NULL;
 }
 
-t_room		*room_create(int x, int y, char *name, int len)
+t_room		*room_create(int x, int y, char *name, int len, char *dbg_msg)
 {
 	t_room		*room;
 
-	room = (t_room*)malloc(sizeof(t_room) + sizeof(char) * (len + 1));
+	room = (t_room*)ft_malloc(sizeof(t_room) + sizeof(char) * (len + 1), dbg_msg);
 	if (room)
 	{
 		room->name = (char*)(room) + sizeof(t_room);
@@ -35,21 +35,16 @@ t_room		*room_create(int x, int y, char *name, int len)
 		room_list_init(&(room->connected));
 		room->parent = NULL;
 	}
-	else
-	{
-		free(room);
-		room = NULL;
-	}
 	return (room);
 }
 
-int			room_list_push(t_room_list *room_list, t_room *room)
+int			room_list_push(t_room_list *room_list, t_room *room, char *dbg_msg)
 {
 	t_room_elem *elem;
 
 	if (room_list == NULL || room == NULL)
 		return (1);
-	elem = (t_room_elem*)malloc(sizeof(t_room_elem));
+	elem = (t_room_elem*)ft_malloc(sizeof(t_room_elem), dbg_msg);
 	if (elem == NULL)
 		return (1);
 	elem->room = room;
@@ -71,7 +66,7 @@ int			room_list_push(t_room_list *room_list, t_room *room)
 	return (0);
 }
 
-t_room		*room_list_popfront(t_room_list *room_list)
+t_room		*room_list_popfront(t_room_list *room_list, char *dbg_msg)
 {
 	t_room_elem *elem;
 	t_room		*room;
@@ -80,9 +75,11 @@ t_room		*room_list_popfront(t_room_list *room_list)
 		return (NULL);
 	elem = room_list->first;
 	room = elem->room;
+	if (elem->next)
+		elem->next->prev = NULL;
 	room_list->first = elem->next;
 	room_list->n--;
-	free(elem);
+	ft_free(elem, dbg_msg);
 	return (room);
 }
 
