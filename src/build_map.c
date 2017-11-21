@@ -21,6 +21,18 @@ void	init(t_lem_in *lem_in)
 	room_list_init(&(lem_in->ants));
 }
 
+void	clean(t_lem_in *lem_in)
+{
+	t_room	*room;
+
+	while ((room = room_list_popfront(&(lem_in->rooms))))
+	{
+		while (room_list_popfront(&(room->connected)))
+			;
+		free(room);
+	}
+}
+
 int		add_room(t_lem_in *lem_in, int x, int y, char *line)
 {
 	int			len;

@@ -78,6 +78,7 @@ t_room			*find_room(t_room_list *room_list, char *name);
 */
 
 void			init(t_lem_in *lem_in);
+void			clean(t_lem_in *lem_in);
 int				add_room(t_lem_in *lem_in, int x, int y, char *line);
 int				add_link(t_lem_in *lem_in, char *name_room1, char *name_room2);
 
@@ -91,6 +92,6 @@ int				parse_input(t_lem_in *lem_in);
 ** From solver.c
 */
 
-int				solve_BFS(t_lem_in *lem_in);
+int				solve_bfs(t_lem_in *lem_in);
 
 #endif
