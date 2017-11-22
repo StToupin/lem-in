@@ -43,7 +43,8 @@ typedef struct	s_room
 typedef struct	s_lem_in
 {
 	int				verbose;
-	t_slist			input;
+	t_openfile		input;
+	t_slist			input_lines;
 	t_openfile		output;
 	t_room_list		rooms;
 	t_room			*start;

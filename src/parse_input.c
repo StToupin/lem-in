@@ -82,7 +82,7 @@ static int	parse_line_room(t_lem_in *lem_in, char *line, t_state *state)
 	if (*state == S_END || *state == S_STARTEND)
 		lem_in->end = lem_in->rooms.last->room;
 	*state = S_ROOM;
-	return (lem_in->rooms.first->room->name[0] == 'L');
+	return (0);
 }
 
 static int	parse_line_link(t_lem_in *lem_in, char *line, t_state *state)
@@ -146,6 +146,23 @@ static int	finalize_parsing(t_lem_in *lem_in)
 	return (0);
 }
 
+static int	read_next_line(t_lem_in *lem_in)
+{
+	int 	ret;
+	char	*line;
+
+	ret = get_next_line(&(lem_in->input), &line);
+	if (ret == 1 && line[0] != '\0')
+	{
+		slist_push_front(&(lem_in->input_lines), line, ft_strlen(line));
+		free(line);
+		return (0);
+	}
+	if (ret == 1)
+		free(line);
+	return (1);
+}
+
 int			parse_input(t_lem_in *lem_in)
 {
 	t_slist_elem	*elem;
@@ -155,9 +172,9 @@ int			parse_input(t_lem_in *lem_in)
 
 	error = 0;
 	s = S_N_ANTS;
-	elem = lem_in->input.last;
-	while (elem != NULL && error == 0)
+	while (read_next_line(lem_in) == 0 && error == 0)
 	{
+		elem = lem_in->input_lines.first;
 		line = elem->s;
 		if (ft_strcmp(line, "##start") == 0 || ft_strcmp(line, "##end") == 0)
 			error = s < S_ROOM || s > S_STARTEND;
@@ -167,7 +184,6 @@ int			parse_input(t_lem_in *lem_in)
 			s = (s == S_START || s == S_STARTEND) ? S_STARTEND : S_END;
 		else if (line[0] != '#')
 			error = parse_line(lem_in, line, &s);
-		elem = elem->prev;
 	}
 	return (error || finalize_parsing(lem_in));
 }

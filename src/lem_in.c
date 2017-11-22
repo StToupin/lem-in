@@ -19,7 +19,8 @@
 static void	init(t_lem_in *lem_in)
 {
 	lem_in->verbose = 0;
-	slist_init(&(lem_in->input));
+	get_next_init(&(lem_in->input), STDIN_FILENO);
+	slist_init(&(lem_in->input_lines));
 	get_next_init(&(lem_in->output), 1);
 	room_list_init(&(lem_in->rooms));
 	lem_in->start = NULL;
@@ -31,7 +32,7 @@ static void	clean(t_lem_in *lem_in)
 {
 	t_room	*room;
 
-	slist_delete(&(lem_in->input));
+	slist_delete(&(lem_in->input_lines));
 	while (room_list_popfront(&(lem_in->ants)))
 		;
 	while ((room = room_list_popfront(&(lem_in->rooms))))
@@ -46,16 +47,36 @@ static void	clean(t_lem_in *lem_in)
 
 static void	print_output(t_lem_in *lem_in)
 {
+	int				i;
 	t_slist_elem	*elem;
 
-	elem = lem_in->input.last;
+	i = 0;
+	elem = lem_in->input_lines.last;
 	while (elem != NULL)
 	{
 		write_next_line(&(lem_in->output), elem->s);
 		elem = elem->prev;
+		i++;
 	}
 	write_next_byte(&(lem_in->output), '\n');
 	move_ants(lem_in);
+}
+
+static int	check(t_lem_in *lem_in)
+{
+	if (lem_in->n_ants == 0)
+		return(puterror(lem_in, "no ant"));
+	if (lem_in->n_ants < 0)
+		return(puterror(lem_in, "negative number of ants"));
+	if (lem_in->ants.n != lem_in->n_ants)
+		return(puterror(lem_in, "wrong number of ants"));
+	if (lem_in->rooms.n == 0)
+		return(puterror(lem_in, "no room"));
+	if (lem_in->start == NULL)
+		return(puterror(lem_in, "undefined start"));
+	if (lem_in->end == NULL)
+		return(puterror(lem_in, "undefined end"));
+	return (0);
 }
 
 int	main(int argc, char **argv)
@@ -65,11 +86,10 @@ int	main(int argc, char **argv)
 
 	init(&lem_in);
 	lem_in.verbose = (argc > 1 && ft_strcmp(argv[1], "-v") == 0);
-	err = get_all_lines(STDIN_FILENO, &(lem_in.input));
-	if (err == 0)
-		err = parse_input(&lem_in);
-	if (err == 0 && lem_in.verbose == 1)
+	err = parse_input(&lem_in);
+	if (lem_in.verbose == 1)
 		print_room_list(&lem_in);
+	err = check(&lem_in);
 	if (err == 0)
 		err = solve_bfs(&lem_in);
 	if (err == 0 && lem_in.verbose == 1)

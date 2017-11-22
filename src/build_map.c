@@ -12,6 +12,25 @@
 
 #include <stdlib.h>
 #include "lem_in.h"
+#include "ft.h"
+
+int		check_room(t_lem_in *lem_in, int x, int y, char *name)
+{
+	t_room_elem	*elem;
+
+	if (name[0] == 'L')
+		return (puterror(lem_in, "(add_room) illegal room name"));
+	elem = lem_in->rooms.first;
+	while (elem != NULL)
+	{
+		if (ft_strcmp(elem->room->name, name) == 0)
+			return (puterror(lem_in, "(add_room) duplicate room name"));
+		if (elem->room->x == x && elem->room->y == y)
+			return (puterror(lem_in, "(add_room) duplicate room coordinates"));
+		elem = elem->next;
+	}
+	return (0);
+}
 
 int		add_room(t_lem_in *lem_in, int x, int y, char *line)
 {
@@ -21,10 +40,16 @@ int		add_room(t_lem_in *lem_in, int x, int y, char *line)
 	len = 0;
 	while (line[len] != ' ')
 		len++;
+	if (len == 0)
+		return (puterror(lem_in, "(add_room) empty room name"));
+	line[len] = '\0';
+	if (check_room(lem_in, x, y, line) == 1)
+		return (1);
+	line[len] = ' ';
 	room = room_create(x, y, line, len);
-	if (room == NULL)
+	if (room == NULL || room_list_push(&(lem_in->rooms), room))
 		return (puterror(lem_in, "(add_room) memory error"));
-	return (room_list_push(&(lem_in->rooms), room));
+	return (0);
 }
 
 int		add_link(t_lem_in *lem_in, char *name_room1, char *name_room2)
