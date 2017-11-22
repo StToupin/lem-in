@@ -15,25 +15,6 @@
 #include "slist.h"
 #include "get_next.h"
 
-static int	slist_delete(t_slist *slist)
-{
-	t_slist_elem	*element;
-
-	while (slist->len > 0)
-	{
-		element = slist->last;
-		slist->last = element->prev;
-		if (slist->len == 1)
-			slist->first = NULL;
-		else
-			slist->last->next = NULL;
-		slist->len--;
-		slist->total_len -= element->len;
-		ft_free(element, "slist delete");
-	}
-	return (1);
-}
-
 static int	find_line_break(char *s, int size)
 {
 	int i;
@@ -67,7 +48,7 @@ int			get_next_line(t_openfile *of, char **line)
 	size_left = of->buf_size - (of->buf_pos - of->buf);
 	if ((line_break_pos = find_line_break(of->buf_pos, size_left)) < size_left)
 		return (get_from_single_buffer(of, line_break_pos, line));
-	slist_create(&slist);
+	slist_init(&slist);
 	while (of->eof == 0)
 	{
 		if (slist_push_front(&slist, of->buf_pos, line_break_pos) == 1)
@@ -83,4 +64,23 @@ int			get_next_line(t_openfile *of, char **line)
 		line_break_pos = find_line_break(of->buf, size_left);
 	}
 	return ((*line = slist_join(&slist)) == NULL ? -1 : 1);
+}
+
+int 		get_all_lines(int fd, t_slist *lines)
+{
+	t_openfile	of;
+	int			ret;
+	char		*line;
+
+	get_next_init(&of, fd);
+	while ((ret = get_next_line(&of, &line)) == 1 && line[0] != '\0')
+	{
+		slist_push_front(lines, line, ft_strlen(line));
+		free(line);
+	}
+	if (ret == 1)
+		free(line);
+	else if (ret == 1)
+		slist_delete(lines);
+	return (0);
 }

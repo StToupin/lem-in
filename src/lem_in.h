@@ -12,6 +12,8 @@
 
 #ifndef LEM_IN_H
 # define LEM_IN_H
+# include "slist.h"
+# include "get_next.h"
 
 typedef struct	s_room_elem
 {
@@ -33,12 +35,16 @@ typedef struct	s_room
 	int				x;
 	int				y;
 	t_room_list		connected;
-	struct s_room	*parent;
+	struct s_room	*path_prev;
+	struct s_room	*path_next;
+	int				ant_received;
 }				t_room;
 
 typedef struct	s_lem_in
 {
 	int				verbose;
+	t_slist			input;
+	t_openfile		output;
 	t_room_list		rooms;
 	t_room			*start;
 	t_room			*end;
@@ -60,29 +66,25 @@ typedef enum	e_state
 ** From debug.c
 */
 
-void			ft_putstr(char *str);
-void			ft_putnbr(int n);
-int				ft_puterror(int verbose, char *str);
-void			print_room(t_room *room);
-void			print_room_list(t_room_list *room_list);
-int				print_path_from_end(t_room *room);
+int				puterror(t_lem_in *lem_in, char *str);
+void			print_room(t_lem_in *lem_in, t_room *room);
+void			print_room_list(t_lem_in *lem_in);
+void			print_path(t_lem_in *lem_in);
 
 /*
 ** From room_list.c
 */
 
 void			room_list_init(t_room_list *room_list);
-t_room			*room_create(int x, int y, char *name, int len, char *dbg_msg);
-int				room_list_push(t_room_list *room_list, t_room *room, char *dbg_msg);
-t_room			*room_list_popfront(t_room_list *room_list, char *dbg_msg);
+t_room			*room_create(int x, int y, char *name, int len);
+int				room_list_push(t_room_list *room_list, t_room *room);
+t_room			*room_list_popfront(t_room_list *room_list);
 t_room			*find_room(t_room_list *room_list, char *name);
 
 /*
 ** From build_map.c
 */
 
-void			init(t_lem_in *lem_in);
-void			clean(t_lem_in *lem_in);
 int				add_room(t_lem_in *lem_in, int x, int y, char *line);
 int				add_link(t_lem_in *lem_in, char *name_room1, char *name_room2);
 
@@ -97,5 +99,11 @@ int				parse_input(t_lem_in *lem_in);
 */
 
 int				solve_bfs(t_lem_in *lem_in);
+
+/*
+** From moove_ants.c
+*/
+
+void			move_ants(t_lem_in *lem_in);
 
 #endif

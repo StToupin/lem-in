@@ -1,25 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft.h                                               :+:      :+:    :+:   */
+/*   get_next_common.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: stoupin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/06/29 14:00:46 by stoupin           #+#    #+#             */
-/*   Updated: 2017/06/29 14:00:47 by stoupin          ###   ########.fr       */
+/*   Created: 2017/04/20 12:22:11 by stoupin           #+#    #+#             */
+/*   Updated: 2017/05/05 10:23:34 by stoupin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_H
-# define FT_H
+#include "get_next.h"
 
-/*
-** From ft.c
-*/
-
-int		ft_strcmp(const char *s1, const char *s2);
-char	*ft_strndup(char *str, int n);
-void	ft_strncpy(char *dest, char *src, int len);
-int		ft_strlen(char *str);
-
-#endif
+void	get_next_init(t_openfile *of, int fd)
+{
+	of->fd = fd;
+	of->buf_size = 0;
+	of->buf_pos = of->buf;
+	of->eof = 0;
+}

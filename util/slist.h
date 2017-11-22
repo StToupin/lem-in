@@ -30,9 +30,10 @@ typedef struct	s_slist
 	size_t			total_len;
 }				t_slist;
 
-void			slist_create(t_slist *slist);
+void			slist_init(t_slist *slist);
 int				slist_push_front(t_slist *slist, char *s, size_t len);
 void			slist_pop_back(t_slist *slist, char *dest, size_t *len);
 char			*slist_join(t_slist *slist);
+int				slist_delete(t_slist *slist);
 
 #endif

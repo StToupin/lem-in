@@ -38,7 +38,7 @@ char	*ft_strndup(char *str, int n)
 	char	*new_str;
 	int		i;
 
-	new_str = (char*)ft_malloc(sizeof(char) * (n + 1), "strndup");
+	new_str = (char*)malloc(sizeof(char) * (n + 1));
 	if (new_str != NULL)
 	{
 		i = 0;
@@ -65,17 +65,12 @@ void	ft_strncpy(char *dest, char *src, int len)
 	dest[i] = '\0';
 }
 
-void		*ft_malloc(size_t size, char *dbg_msg)
+int		ft_strlen(char *str)
 {
-	void	*ptr;
+	int len;
 
-	ptr = malloc(size);
-	//printf("malloc %p (%s)\n", ptr, dbg_msg); //
-	return (ptr);
-}
-
-void		ft_free(void *ptr, char *dbg_msg)
-{
-	//printf("free %p (%s)\n", ptr, dbg_msg); //
-	free(ptr);
+	len = 0;
+	while (str[len] != '\0')
+		len++;
+	return (len);
 }

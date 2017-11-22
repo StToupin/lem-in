@@ -13,14 +13,6 @@
 #include <unistd.h>
 #include "get_next.h"
 
-void			get_next_init(t_openfile *of, int fd)
-{
-	of->fd = fd;
-	of->buf_size = 0;
-	of->buf_pos = of->buf;
-	of->eof = 0;
-}
-
 int				get_next_byte(t_openfile *of, char *byte)
 {
 	if (of == NULL || of->fd < 0 || byte == NULL)
@@ -40,24 +32,4 @@ int				get_next_byte(t_openfile *of, char *byte)
 	*byte = *(of->buf_pos);
 	of->buf_pos++;
 	return (1);
-}
-
-void			write_next_byte(t_openfile *of, char byte)
-{
-	if (of == NULL)
-		return ;
-	if (of->eof == 1 && of->buf_size > 0)
-	{
-		write(of->fd, of->buf, of->buf_size);
-		return ;
-	}
-	*(of->buf_pos) = byte;
-	of->buf_pos++;
-	of->buf_size++;
-	if (of->buf_size == BUFF_SIZE)
-	{
-		write(of->fd, of->buf, of->buf_size);
-		of->buf_size = 0;
-		of->buf_pos = of->buf;
-	}
 }

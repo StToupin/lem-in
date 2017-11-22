@@ -15,107 +15,71 @@
 #include <stdlib.h> //
 #include "lem_in.h"
 
-static void	print_digit(int n)
+int			puterror(t_lem_in *lem_in, char *str)
 {
-	char digit;
-
-	if (n == 0)
-		return ;
-	print_digit(n / 10);
-	if (n >= 0)
-		digit = ('0' + (n % 10));
-	else
-		digit = ('0' - (n % 10));
-	write(1, &digit, 1);
-}
-
-void		ft_putnbr(int n)
-{
-	if (n < 0)
-		write(1, "-", 1);
-	if (n == 0)
-		write(1, "0", 1);
-	else
-		print_digit(n);
-}
-
-void		ft_putstr(char *str)
-{
-	int len;
-
-	len = 0;
-	while (str[len] != '\0')
-		len++;
-	write(1, str, len);
-}
-
-int			ft_puterror(int verbose, char *str)
-{
-	int len;
-
-	if (verbose)
-	{
-		len = 0;
-		while (str[len] != '\0')
-			len++;
-		//write(2, str, len);
-	}
+	if (lem_in->verbose)
+		write_next_line(&(lem_in->output), str);
 	return (1);
 }
 
-void		print_room(t_room *room)
+void		print_room(t_lem_in *lem_in, t_room *room)
 {
 	t_room_elem	*elem;
 
 	if (room == NULL)
-	{
-		ft_putstr("(null)\n");
-		return ;
-	}
-	ft_putstr("x: ");
-	ft_putnbr(room->x);
-	ft_putstr(", y: ");
-	ft_putnbr(room->y);
-	ft_putstr(", name: ");
-	ft_putstr(room->name);
-	ft_putstr("\n");
+		return (write_next_line(&(lem_in->output), "(null)"));
+	write_next_str(&(lem_in->output), "x: ");
+	write_next_number(&(lem_in->output), room->x);
+	write_next_str(&(lem_in->output), ", y: ");
+	write_next_number(&(lem_in->output), room->y);
+	write_next_str(&(lem_in->output), ", name: ");
+	write_next_str(&(lem_in->output), room->name);
+	if (room == lem_in->start)
+		write_next_str(&(lem_in->output), " (START)");
+	if (room == lem_in->end)
+		write_next_str(&(lem_in->output), " (END)");
+	write_next_byte(&(lem_in->output), '\n');
 	elem = room->connected.first;
 	while (elem != NULL)
 	{
-		ft_putstr("  -> ");
-		ft_putstr(elem->room->name);
-		ft_putstr("\n");
+		write_next_str(&(lem_in->output), "  -> ");
+		write_next_line(&(lem_in->output), elem->room->name);
 		elem = elem->next;
-	}
-	if (room->parent != NULL)
-	{
-		ft_putstr("  Parent: ");
-		ft_putstr(room->parent->name);
-		ft_putstr("\n");
 	}
 }
 
-void		print_room_list(t_room_list *room_list)
+void		print_room_list(t_lem_in *lem_in)
 {
 	t_room_elem	*elem;
 
-	elem = room_list->first;
+	elem = lem_in->rooms.first;
 	while (elem != NULL)
 	{
-		print_room(elem->room);
+		print_room(lem_in, elem->room);
 		elem = elem->next;
 	}
+	write_next_byte(&(lem_in->output), '\n');
 }
 
-int			print_path_from_end(t_room *room)
+void		print_path(t_lem_in *lem_in)
 {
-	int n;
+	t_room	*room;
+	int		first;
 
-	if (room->parent == room)
-		n = 0;
-	else
-		n = print_path_from_end(room->parent) + 1;
-	ft_putstr(room->name);
-	ft_putstr("\n");
-	return (n);
+	write_next_line(&(lem_in->output), "Path found:");
+	room = lem_in->start;
+	first = 1;
+	while (1)
+	{
+		if (first == 1)
+			write_next_str(&(lem_in->output), "  ");
+		else
+			write_next_str(&(lem_in->output), " -> ");
+		first = 0;
+		write_next_str(&(lem_in->output), room->name);
+		if (room == lem_in->end)
+			break;
+		room = room->path_next;
+	}
+	write_next_str(&(lem_in->output), "\n\n");
 }

@@ -14,7 +14,7 @@
 #include "slist.h"
 #include "ft.h"
 
-void		slist_create(t_slist *slist)
+void		slist_init(t_slist *slist)
 {
 	slist->len = 0;
 	slist->total_len = 0;
@@ -26,8 +26,8 @@ int			slist_push_front(t_slist *slist, char *s, size_t len)
 {
 	t_slist_elem	*element;
 
-	element = (t_slist_elem*)ft_malloc(sizeof(t_slist_elem)
-									+ sizeof(char) * (len + 1), "slist push front");
+	element = (t_slist_elem*)malloc(sizeof(t_slist_elem)
+									+ sizeof(char) * (len + 1));
 	if (element == NULL)
 		return (1);
 	element->s = (void*)element + sizeof(t_slist_elem);
@@ -63,7 +63,7 @@ void		slist_pop_back(t_slist *slist, char *dest, size_t *len)
 	slist->total_len -= element->len;
 	*len = element->len;
 	ft_strncpy(dest, element->s, *len);
-	ft_free(element, "slist pop back");
+	free(element);
 }
 
 char		*slist_join(t_slist *slist)
@@ -72,7 +72,7 @@ char		*slist_join(t_slist *slist)
 	size_t	elem_len;
 	size_t	copied;
 
-	joined = (char*)ft_malloc(sizeof(char) * (slist->total_len + 1), "slist join");
+	joined = (char*)malloc(sizeof(char) * (slist->total_len + 1));
 	if (joined == NULL)
 		return (NULL);
 	copied = 0;
@@ -83,4 +83,23 @@ char		*slist_join(t_slist *slist)
 	}
 	joined[copied] = '\0';
 	return (joined);
+}
+
+int			slist_delete(t_slist *slist)
+{
+	t_slist_elem	*element;
+
+	while (slist->len > 0)
+	{
+		element = slist->last;
+		slist->last = element->prev;
+		if (slist->len == 1)
+			slist->first = NULL;
+		else
+			slist->last->next = NULL;
+		slist->len--;
+		slist->total_len -= element->len;
+		free(element);
+	}
+	return (1);
 }

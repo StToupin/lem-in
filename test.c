@@ -12,7 +12,7 @@ int	main(void)
 	err = parse_input(&lem_in);
 	if (err == 1)
 	{
-		ft_putstr("Error\n");
+		ft_putstr("ERROR\n");
 		clean(&lem_in);
 	}
 	else

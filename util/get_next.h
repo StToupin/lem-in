@@ -12,6 +12,7 @@
 
 #ifndef GET_NEXT_H
 # define GET_NEXT_H
+# include "slist.h"
 
 # define BUFF_SIZE 1024
 
@@ -25,17 +26,31 @@ typedef struct	s_openfile
 }				t_openfile;
 
 /*
-** From get_next_line.c
+** From get_next_common.c
 */
 
-int				get_next_line(t_openfile *of, char **line);
+void			get_next_init(t_openfile *of, int fd);
 
 /*
 ** From get_next_byte.c
 */
 
-void			get_next_init(t_openfile *file, int fd);
 int				get_next_byte(t_openfile *file, char *byte);
+
+/*
+** From get_next_line.c
+*/
+
+int				get_next_line(t_openfile *of, char **line);
+int				get_all_lines(int fd, t_slist *lines);
+
+/*
+** From write_next.c
+*/
+
 void			write_next_byte(t_openfile *file, char byte);
+void			write_next_number(t_openfile *file, int n);
+void			write_next_str(t_openfile *of, char *str);
+void			write_next_line(t_openfile *of, char *str);
 
 #endif
