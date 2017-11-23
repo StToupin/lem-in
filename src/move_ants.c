@@ -35,6 +35,14 @@ static void	print_move(t_lem_in *lem_in, int ant_number, char *room_name,
 	write_next_str(&(lem_in->output), room_name);
 }
 
+static void	move_ant(t_lem_in *lem_in, int ant_number, t_room_elem *ant,
+						int first_move)
+{
+	ant->room = ant->room->path_next;
+	ant->room->ant_received = 1;
+	print_move(lem_in, ant_number, ant->room->name, first_move);
+}
+
 static int	step(t_lem_in *lem_in)
 {
 	int			ant_number;
@@ -54,9 +62,7 @@ static int	step(t_lem_in *lem_in)
 			all_ants_at_the_end = 0;
 			if (ant->room->path_next->ant_received == 0)
 			{
-				ant->room = ant->room->path_next;
-				ant->room->ant_received = 1;
-				print_move(lem_in, ant_number, ant->room->name, first_move);
+				move_ant(lem_in, ant_number, ant, first_move);
 				first_move = 0;
 			}
 		}

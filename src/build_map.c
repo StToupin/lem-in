@@ -52,6 +52,22 @@ int		add_room(t_lem_in *lem_in, int x, int y, char *line)
 	return (0);
 }
 
+int		check_link(t_lem_in *lem_in, t_room *room1, t_room *room2)
+{
+	t_room_elem	*elem;
+
+	if (room1 == room2)
+		return (puterror(lem_in, "(add_link) link room to itself"));
+	elem = room1->connected.first;
+	while (elem != NULL)
+	{
+		if (elem->room == room2)
+			return (puterror(lem_in, "(add_link) duplicate link"));
+		elem = elem->next;
+	}
+	return (0);
+}
+
 int		add_link(t_lem_in *lem_in, char *name_room1, char *name_room2)
 {
 	t_room	*room1;
@@ -63,6 +79,8 @@ int		add_link(t_lem_in *lem_in, char *name_room1, char *name_room2)
 	room2 = find_room(&(lem_in->rooms), name_room2);
 	if (room2 == NULL)
 		return (puterror(lem_in, "(link) missing second room"));
+	if (check_link(lem_in, room1, room2))
+		return (1);
 	if (room_list_push(&(room1->connected), room2))
 		return (puterror(lem_in, "(add_link) memory error 1"));
 	if (room_list_push(&(room2->connected), room1))

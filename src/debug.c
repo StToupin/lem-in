@@ -11,14 +11,15 @@
 /* ************************************************************************** */
 
 #include <unistd.h>
-#include <stdio.h> //
-#include <stdlib.h> //
 #include "lem_in.h"
 
 int			puterror(t_lem_in *lem_in, char *str)
 {
 	if (lem_in->verbose)
+	{
+		write_next_str(&(lem_in->output), "ERROR: ");
 		write_next_line(&(lem_in->output), str);
+	}
 	return (1);
 }
 
@@ -78,7 +79,7 @@ void		print_path(t_lem_in *lem_in)
 		first = 0;
 		write_next_str(&(lem_in->output), room->name);
 		if (room == lem_in->end)
-			break;
+			break ;
 		room = room->path_next;
 	}
 	write_next_str(&(lem_in->output), "\n\n");

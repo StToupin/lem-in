@@ -54,7 +54,8 @@ static void	print_output(t_lem_in *lem_in)
 	elem = lem_in->input_lines.last;
 	while (elem != NULL)
 	{
-		write_next_line(&(lem_in->output), elem->s);
+		if (elem->s[0] != '\0')
+			write_next_line(&(lem_in->output), elem->s);
 		elem = elem->prev;
 		i++;
 	}
@@ -65,21 +66,21 @@ static void	print_output(t_lem_in *lem_in)
 static int	check(t_lem_in *lem_in)
 {
 	if (lem_in->n_ants == 0)
-		return(puterror(lem_in, "no ant"));
+		return (puterror(lem_in, "no ant"));
 	if (lem_in->n_ants < 0)
-		return(puterror(lem_in, "negative number of ants"));
+		return (puterror(lem_in, "negative number of ants"));
 	if (lem_in->ants.n != lem_in->n_ants)
-		return(puterror(lem_in, "wrong number of ants"));
+		return (puterror(lem_in, "wrong number of ants"));
 	if (lem_in->rooms.n == 0)
-		return(puterror(lem_in, "no room"));
+		return (puterror(lem_in, "no room"));
 	if (lem_in->start == NULL)
-		return(puterror(lem_in, "undefined start"));
+		return (puterror(lem_in, "undefined start"));
 	if (lem_in->end == NULL)
-		return(puterror(lem_in, "undefined end"));
+		return (puterror(lem_in, "undefined end"));
 	return (0);
 }
 
-int	main(int argc, char **argv)
+int			main(int argc, char **argv)
 {
 	t_lem_in	lem_in;
 	int			err;
@@ -95,7 +96,7 @@ int	main(int argc, char **argv)
 	if (err == 0 && lem_in.verbose == 1)
 		print_path(&lem_in);
 	if (err == 0)
- 		print_output(&lem_in);
+		print_output(&lem_in);
 	if (err == 1)
 		write_next_line(&(lem_in.output), "ERROR");
 	clean(&lem_in);

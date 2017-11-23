@@ -18,8 +18,7 @@ static void	build_path(t_lem_in *lem_in)
 	t_room	*room;
 
 	room = lem_in->end;
-	room->path_next = room;
-	while (room->path_prev != room)
+	while (room != lem_in->start)
 	{
 		room->path_prev->path_next = room;
 		room = room->path_prev;
@@ -34,21 +33,18 @@ int			solve_bfs(t_lem_in *lem_in)
 
 	room_list_init(&queue);
 	room_list_push(&queue, lem_in->start);
-	lem_in->start->path_prev = lem_in->start;
 	while (queue.n > 0)
 	{
 		room = room_list_popfront(&queue);
-		neighbour = room->connected.first;
+		neighbour = room->connected.last;
 		while (neighbour != NULL)
 		{
 			if (neighbour->room->path_prev == NULL)
 			{
 				room_list_push(&queue, neighbour->room);
 				neighbour->room->path_prev = room;
-				if (neighbour->room == lem_in->end)
-					break ;
 			}
-			neighbour = neighbour->next;
+			neighbour = neighbour->prev;
 		}
 	}
 	if (lem_in->end->path_prev == NULL)

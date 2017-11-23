@@ -66,7 +66,7 @@ int			get_next_line(t_openfile *of, char **line)
 	return ((*line = slist_join(&slist)) == NULL ? -1 : 1);
 }
 
-int 		get_all_lines(int fd, t_slist *lines)
+int			get_all_lines(int fd, t_slist *lines)
 {
 	t_openfile	of;
 	int			ret;

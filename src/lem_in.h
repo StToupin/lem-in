@@ -90,6 +90,12 @@ int				add_room(t_lem_in *lem_in, int x, int y, char *line);
 int				add_link(t_lem_in *lem_in, char *name_room1, char *name_room2);
 
 /*
+** From parse_line.c
+*/
+
+int				parse_line(t_lem_in *lem_in, char *line, t_state *state);
+
+/*
 ** From parse_input.c
 */
 
