@@ -3,17 +3,19 @@ CC = gcc
 ifeq ($(DEBUG),yes)
     CFLAGS = -Wall -Wextra -O0 -g -fsanitize=address
 else
-    CFLAGS = -Wall -Wextra -O2
+    CFLAGS = -Wall -Wextra -Ofast -fomit-frame-pointer
 endif
 
 NAME = lem-in
 
-SRC_UTIL = ft.c slist.c get_next_common.c get_next_line.c write_next.c
+SRC_HASHMAP = hashmap_init_crc_0.c hashmap_init_crc_1.c hashmap_init_crc_2.c \
+		hashmap_init.c hashmap_crc32.c hashmap.c hashmap_op.c
+SRC_UTIL = ft.c slist.c get_next_common.c get_next_line.c write_next.c $(SRC_HASHMAP)
 SRC = $(SRC_UTIL) room_list.c debug.c build_map.c parse_line.c parse_input.c solver.c move_ants.c lem_in.c
 OBJ = $(addprefix $(OBJDIR)/, $(SRC:.c=.o))
 OBJDIR = obj
 
-VPATH = util src
+VPATH = util util/hashmap src
 IFLAGS = -Iutil -Isrc
 
 all: $(NAME)

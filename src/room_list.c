@@ -83,17 +83,3 @@ t_room		*room_list_popfront(t_room_list *room_list)
 	free(elem);
 	return (room);
 }
-
-t_room		*find_room(t_room_list *room_list, char *name)
-{
-	t_room_elem	*elem;
-
-	elem = room_list->first;
-	while (elem != NULL)
-	{
-		if (ft_strcmp(elem->room->name, name) == 0)
-			return (elem->room);
-		elem = elem->next;
-	}
-	return (NULL);
-}

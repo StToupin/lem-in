@@ -14,6 +14,7 @@
 # define LEM_IN_H
 # include "slist.h"
 # include "get_next.h"
+# include "hashmap/hashmap.h"
 
 typedef struct	s_room_elem
 {
@@ -47,10 +48,12 @@ typedef struct	s_lem_in
 	t_slist			input_lines;
 	t_openfile		output;
 	t_room_list		rooms;
+	t_hashmap		*room_hashmap;
 	t_room			*start;
 	t_room			*end;
 	int				n_ants;
 	t_room_list		ants;
+	t_hashmap_env	hashmap_env;
 }				t_lem_in;
 
 typedef enum	e_state
@@ -80,7 +83,6 @@ void			room_list_init(t_room_list *room_list);
 t_room			*room_create(int x, int y, char *name, int len);
 int				room_list_push(t_room_list *room_list, t_room *room);
 t_room			*room_list_popfront(t_room_list *room_list);
-t_room			*find_room(t_room_list *room_list, char *name);
 
 /*
 ** From build_map.c

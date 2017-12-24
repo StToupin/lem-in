@@ -16,7 +16,7 @@
 #include "get_next.h"
 #include "ft.h"
 
-static void	init(t_lem_in *lem_in)
+static int	init(t_lem_in *lem_in)
 {
 	lem_in->verbose = 0;
 	get_next_init(&(lem_in->input), STDIN_FILENO);
@@ -26,6 +26,11 @@ static void	init(t_lem_in *lem_in)
 	lem_in->start = NULL;
 	lem_in->end = NULL;
 	room_list_init(&(lem_in->ants));
+	hashmap_init(&(lem_in->hashmap_env));
+	lem_in->room_hashmap = hashmap_new();
+	if (lem_in->room_hashmap == NULL)
+		return (1);
+	return (0);
 }
 
 static void	clean(t_lem_in *lem_in)
@@ -39,10 +44,13 @@ static void	clean(t_lem_in *lem_in)
 	{
 		while (room_list_popfront(&(room->connected)))
 			;
+		hashmap_remove(&lem_in->hashmap_env, lem_in->room_hashmap, room->name);
 		free(room);
 	}
 	lem_in->output.eof = 1;
 	write_next_byte(&(lem_in->output), 0);
+	if (lem_in->room_hashmap != NULL)
+		hashmap_free(lem_in->room_hashmap);
 }
 
 static void	print_output(t_lem_in *lem_in)
@@ -85,12 +93,15 @@ int			main(int argc, char **argv)
 	t_lem_in	lem_in;
 	int			err;
 
-	init(&lem_in);
+	err = init(&lem_in);
 	lem_in.verbose = (argc > 1 && ft_strcmp(argv[1], "-v") == 0);
-	err = parse_input(&lem_in);
-	if (lem_in.verbose == 1)
-		print_room_list(&lem_in);
-	err = check(&lem_in);
+	if (err == 0)
+	{
+		err = parse_input(&lem_in);
+		if (lem_in.verbose == 1)
+			print_room_list(&lem_in);
+		err = check(&lem_in);
+	}
 	if (err == 0)
 		err = solve_bfs(&lem_in);
 	if (err == 0 && lem_in.verbose == 1)
