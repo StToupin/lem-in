@@ -14,13 +14,13 @@
 
 static void	init_step(t_lem_in *lem_in)
 {
-	t_room_elem *elem;
+	t_room *room;
 
-	elem = lem_in->rooms.first;
-	while (elem != NULL)
+	room = lem_in->start;
+	while (room != NULL)
 	{
-		elem->room->ant_received = 0;
-		elem = elem->next;
+		room->ant_received = 0;
+		room = room->path_next;
 	}
 }
 
