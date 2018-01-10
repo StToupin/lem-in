@@ -46,7 +46,7 @@ int		add_room(t_lem_in *lem_in, int x, int y, char *line)
 	if (room == NULL || room_list_push(&(lem_in->rooms), room))
 		return (puterror(lem_in, "(add_room) memory error"));
 	ret = hashmap_put(&lem_in->hashmap_env, lem_in->room_hashmap,
-					  room->name, room);
+						room->name, room);
 	if (ret != MAP_OK)
 		return (1);
 	return (0);
